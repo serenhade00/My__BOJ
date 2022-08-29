@@ -5,11 +5,11 @@
 using namespace std;
 
 // 비용, 정점 번호
-vector<pair<int,int>> edge[100001];
+vector<pair<int,int>> edge[501];
 priority_queue<tuple<int,int,int>, 
                vector<tuple<int,int,int>>,
                greater<tuple<int,int,int>>> pq;
-bool chk[100001];
+bool chk[501];
 
 int main(void)
 {
