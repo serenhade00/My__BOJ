@@ -1,0 +1,17 @@
+#include <iostream>
+
+using namespace std;
+
+int main(void)
+{
+    int a, b, c;
+    cin >> a >> b >> c;
+    
+    int cnt = 0;
+    while(a < b)
+    {
+        a += c;
+        cnt++;
+    }
+    cout << cnt;
+}
