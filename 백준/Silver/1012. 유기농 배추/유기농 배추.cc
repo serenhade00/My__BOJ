@@ -3,8 +3,8 @@ using namespace std;
 #define X first
 #define Y second
 
-int farm[51][51];
-bool vis[51][51];
+int farm[50][50];
+bool vis[50][50];
 int dx[4] = {1, 0, -1, 0};
 int dy[4] = {0, 1, 0, -1};
 int main(void)
