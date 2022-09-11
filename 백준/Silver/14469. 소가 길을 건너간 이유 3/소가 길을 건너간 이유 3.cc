@@ -10,20 +10,15 @@ int main(void)
     cin.tie(0);
     
     int n;
-    int sum = 0;
     cin >> n;
     for(int i=0; i<n; i++)
-    {
         cin >> cow[i].first >> cow[i].second;
-        sum += cow[i].second;
-    }
     
     sort(cow, cow+n);
     
     int tmp_time = cow[0].first+cow[0].second;
     int mx_time = cow[n-1].first;
     
-    int cnt = 1;
     vis[0] = 1;
     while(tmp_time < mx_time)
     {
@@ -44,7 +39,6 @@ int main(void)
         }
         tmp_time += cow[idx].second;
         vis[idx] = 1;
-        cnt++;
     }
     for(int i=1; i<n; i++)
     {
