@@ -29,16 +29,19 @@ int main(void)
             cout << 1 << '\n';
             continue;
         }
-        while(pq.size() > 1)
+        while(!pq.empty())
         {
-            long long x = pq.top();
-            pq.pop();
-            long long y = pq.top();
-            pq.pop();
-           
-            ans *= (x*y) % 1000000007;
+            long long tmp1 = 1;
+            for(int i=0; i<2; i++)
+            {
+                tmp1 *= pq.top();
+                pq.pop();
+            }
+            ans = ans * (tmp1 % 1000000007);
             ans %= 1000000007;
-            pq.push(x*y);
+            if(pq.empty())
+                break;
+            pq.push(tmp1);
         }
         cout << ans << '\n';
     }
