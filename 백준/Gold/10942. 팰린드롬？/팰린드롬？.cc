@@ -27,7 +27,7 @@ int main(void)
     
     for(int i=n-1; i>=1; i--)
     {
-        for(int j=i+2; j<=n; j++)
+        for(int j=i+1; j<=n; j++)
         {
             if(num[i] == num[j] && dp[i+1][j-1])
                 dp[i][j] = 1;
