@@ -17,7 +17,7 @@ int get_find(int x)
 {
 	if(p[x] < 0)
 		return x;
-	return p[x] = get_find(p[x]);
+	return get_find(p[x]);
 }
 
 int get_union(int u, int v)
