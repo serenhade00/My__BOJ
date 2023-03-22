@@ -14,9 +14,7 @@ int dy[4] = {-1, 1, 0, 0};
 
 int solve(int x, int y)
 {
-    priority_queue<pair<int,pair<int,int>>,
-                vector<pair<int,pair<int,int>>>,
-                greater<pair<int,pair<int,int>>>> pq;
+    queue<pair<int,int>> q;
 
     for(int i=0; i<n; i++)
     {
@@ -27,28 +25,26 @@ int solve(int x, int y)
     }
     
     dist[0][0] = 0;
-    pq.push({0, {0, 0}});
-    while(!pq.empty())
+    q.push({0, 0});
+    while(!q.empty())
     {
-        auto cur = pq.top(); pq.pop();
-        if(cur.X != dist[cur.Y.X][cur.Y.Y])
-            continue;
+        auto cur = q.front(); q.pop();
+
         for(int dir=0; dir<4; dir++)
         {
-            int nx = cur.Y.X + dx[dir];
-            int ny = cur.Y.Y + dy[dir];
+            int nx = cur.X + dx[dir];
+            int ny = cur.Y + dy[dir];
             if(nx < 0 || ny < 0 || nx >= n || ny >= n)
                 continue;
-            if(dist[cur.Y.X][cur.Y.Y] + graph[cur.Y.X][cur.Y.Y] < dist[nx][ny])
+            if(dist[cur.X][cur.Y] + graph[cur.X][cur.Y] < dist[nx][ny])
             {
-                dist[nx][ny] = dist[cur.Y.X][cur.Y.Y] + graph[cur.Y.X][cur.Y.Y];
-                pq.push({dist[nx][ny], {nx, ny}});
+                dist[nx][ny] = dist[cur.X][cur.Y] + graph[cur.X][cur.Y];
+                q.push({nx, ny});
             }
         }
     }
     return dist[x-1][y-1] + graph[x-1][y-1];
 }
-
 int main(void)
 {
     ios::sync_with_stdio(0);
