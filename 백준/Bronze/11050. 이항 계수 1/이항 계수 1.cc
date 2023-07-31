@@ -1,32 +1,28 @@
-#include <iostream>
+#include <bits/stdc++.h>
 
 using namespace std;
 
-int factorial(int n)
+int cache[11][11];
+
+int solve(int n, int k)
 {
-    if(n==1)
+	if(n <= 1 || n == k || k == 0)
         return 1;
-    else
-        return n*factorial(n-1);
+    if(k == 1)
+        return n;
+    
+    int &ret = cache[n][k];
+    if(ret != -1)
+        return ret;
+   
+    return cache[n][k] = (solve(n-1, k) + solve(n-1, k-1)); 
 }
+
 int main(void)
 {
-    ios::sync_with_stdio(0);
-    cin.tie(0);
-    int a, b;
-    int ans = 1;
-    int count = 0;
-    cin >> a >> b;
-    if(b==0)
-    {
-        cout << 1;
-        return 0;
-    }
-    for(int i=a; count < b; i--, count++)
-    {
-        ans *= i;
-    }
-    ans /= factorial(b);
-    cout << ans;
+    int n, k;
+    cin >> n >> k;
     
+    memset(cache, -1, sizeof(cache));
+    cout << solve(n, k);
 }
