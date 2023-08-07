@@ -1,0 +1,202 @@
+#include <bits/stdc++.h>
+#define X first
+#define Y second
+using namespace std;
+
+const int MAX = 50000;
+const int DMAX = 16;
+const int INF = 123456789;
+typedef pair<int, int> pii;
+
+int V, E;
+// 점 A, 점 B 연결하는 Edge , 가중치는 W 
+struct Edge {
+    int A;
+    int B;
+    int W;
+    bool Used = false;
+    Edge() :Edge(0, 0, 0) {}
+    Edge(int a1, int b1, int w1) : A(a1), B(b1), W(w1) {}
+};
+
+vector<Edge> Vec; // Edge 들 저장 
+vector<int> p(MAX+1, -1); // union_find parent
+vector<pii> graph[MAX + 1]; // graph[i] : i 의 자식노드 , 해당 가중치
+int depth[MAX + 1]; // 노드 깊이
+int parent[MAX + 1][DMAX + 1]; // parent[i][k] = i의 2^k 조상 
+// biggest[i][k] : i의 2^k 조상으로 가는 길에 있는 가장 큰수 , 2번째로 큰수
+// 가장 큰 수로 대체 했을 경우 최소 MST 와 같은 경우 방지  
+pii biggest[MAX + 1][DMAX + 1];
+
+bool cmp(const Edge& E1, const Edge& E2) {
+    return E1.W < E2.W;
+}
+
+int find(int x)
+{
+    if(p[x] < 0)
+        return x;
+    return p[x] = find(p[x]);
+}
+
+void Union(int u, int v)
+{
+    u = find(u), v = find(v);
+    if(u == v)
+        return;
+    p[v] = u;
+}
+
+void make_depth(int cur)
+{
+    for(auto nxt : graph[cur])
+    {
+        if(!depth[nxt.X])
+        {
+            depth[nxt.X] = depth[cur] + 1;
+            parent[nxt.X][0] = cur;
+
+            biggest[nxt.X][0] = pii(nxt.Y, -1);
+            make_depth(nxt.X);
+        }
+    }
+}
+
+int get_max(Edge e)
+{
+    int a = e.A, b = e.B, w = e.W;
+    int ret = -1;
+    if(depth[a] < depth[b])
+        swap(a, b);
+    int diff = depth[a] - depth[b];
+    int cnt = 0;
+    while(diff) // 깊이 차이날때, 맞추는 과정
+    {
+        if(diff % 2)
+        {
+            if(biggest[a][cnt].X != w) // 만약 w 이외에 갱신 값이 있으면 ret update
+                ret = max(ret, biggest[a][cnt].X);
+            if(biggest[a][cnt].Y != -1) // 만약 -1 이외에 갱신 값이 있으면 ret update
+                ret = max(ret, biggest[a][cnt].Y);
+            a = parent[a][cnt];
+        }
+        diff /= 2;
+        cnt++;
+    }
+    if(a != b)
+    {
+        for(int i=DMAX; i>=0; i--)
+        {
+            if (parent[a][i] != parent[b][i]) // LCA까지의 간선 중 최댓값 update
+            {
+                if (biggest[a][i].X != w)
+                    ret = max(ret, biggest[a][i].X);
+                else if (biggest[a][i].Y != -1)
+                    ret = max(ret, biggest[a][i].Y);
+                if (biggest[b][i].X != w)
+                    ret = max(ret, biggest[b][i].X);
+                else if (biggest[b][i].Y != -1)
+                    ret = max(ret, biggest[b][i].Y);
+
+                a = parent[a][i];
+                b = parent[b][i];
+            }
+        }
+        if (biggest[a][0].X != w) // LCA와 연결된 간선 확인
+            ret = max(ret, biggest[a][0].X);
+        else if (biggest[a][0].Y != -1)
+            ret = max(ret, biggest[a][0].Y);
+        if (biggest[b][0].X != w)
+            ret = max(ret, biggest[b][0].X);
+        else if (biggest[b][0].Y != -1)
+            ret = max(ret, biggest[b][0].Y);
+    }
+    return ret;
+}
+
+int main(void)
+{
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+
+    cin >> V >> E;
+    for (int i = 0; i < E; i++) {
+        int a, b, w;
+        cin >> a >> b >> w;
+        Vec.push_back(Edge(a, b, w));
+    }
+
+    int MST = 0; // MST 비용 
+    int cnt = 0; // V-1 개의 Edge 나오면 MST 완성
+    sort(Vec.begin(), Vec.end(), cmp); // 가중치 작은순 edge 정렬
+    // MST
+    for (int i = 0; i < E; i++) {
+        int a = Vec[i].A;
+        int b = Vec[i].B;
+        int cost = Vec[i].W;
+        int aRoot = find(a);
+        int bRoot = find(b);
+        if (aRoot == bRoot) 
+            continue;
+
+        Union(a, b);
+        MST += cost;
+        Vec[i].Used = true;
+
+        // 그래프 정보 저장  
+        graph[a].push_back(pii(b, Vec[i].W));
+        graph[b].push_back(pii(a, Vec[i].W));
+
+        cnt++;
+        if (cnt == V - 1) 
+            break;
+    }
+    // MST 가 애초에 없는 경우
+    if (cnt != V - 1 || E <= V - 1) {
+        cout << -1 << '\n';
+        return 0;
+    }
+    // LCA 구현, 1번 노드를 Root로 생각
+    depth[1] = 1;
+    // tree Depth 만들기
+    make_depth(1);
+    for(int k=0; k<=DMAX; k++) // biggest 갱신, i의 2^k+1번째 부모는 2^k번째 부모의 2^k번째 부모
+    {
+        for(int i=1; i<=V; i++)
+        {
+            int father = parent[i][k];
+            if(father && parent[father][k])
+            {
+                int w1, w2, f1, f2;
+                tie(w1, w2) = biggest[i][k];
+                tie(f1, f2) = biggest[father][k];
+                if(w1 > f1)
+                {
+                    biggest[i][k+1].X = w1, biggest[i][k+1].Y = max(w2, f1);
+                }
+                else if(w1 < f1)
+                {
+                    biggest[i][k+1].X = f1, biggest[i][k+1].Y = max(f2, w1);
+                }
+                else
+                {
+                    biggest[i][k+1].X = w1, biggest[i][k+1].Y = max(f2, w2);
+                }
+                parent[i][k+1] = parent[father][k];
+            }   
+        }
+    }
+    int Plus = INF;
+    for (int i = 0; i < E; ++i) {
+        if (Vec[i].Used) // MST 사용된 간선이면 제외
+            continue;
+        int t = get_max(Vec[i]); // 대체 간선 중 minus할 최댓값
+        if (t == -1 || t == Vec[i].W) 
+            continue;
+        Plus = min(Plus, Vec[i].W - t); // 대체 간선 - minus 최댓값이 minimum일때 SMST 완성.
+    }
+    if (Plus == INF) 
+        cout << -1 << '\n';
+    else 
+        cout << MST + Plus << '\n';
+}
