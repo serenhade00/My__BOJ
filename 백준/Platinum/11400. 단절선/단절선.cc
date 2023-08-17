@@ -31,6 +31,9 @@ int DFS(int cur, int prev)
 
 int main(void)
 {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+
 	int v, e, a, b;
 	cin >> v >> e;
 
