@@ -12,7 +12,7 @@ int main(void)
     cin >> n >> k;
     for(int i=0; i<n; i++)
         cin >> num[i];
-    long long st = 0, en = 2000000001;
+    long long st = 0, en = 1500000001;
     while(st+1 < en)
     {
         long long mid = (st+en)/2;
