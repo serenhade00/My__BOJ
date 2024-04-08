@@ -2,10 +2,10 @@
 
 using namespace std;
 
-map<string,int> m;
+unordered_map<string,int> m;
 vector<string> v;
 
-bool cmp(const string &s1, const string &s2)
+bool cmp(const string& s1, const string& s2)
 {
     if(m[s1] != m[s2])
         return m[s1] > m[s2] ? true : false;
@@ -26,8 +26,9 @@ int main(void)
         cin >> s;
         if(s.size() < k)
             continue;
-        v.push_back(s);
         m[s]++;
+        if(m[s] == 1)
+        	v.push_back(s);
     }
     sort(v.begin(), v.end(), cmp);
     v.erase(unique(v.begin(),v.end()), v.end());
