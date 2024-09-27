@@ -1,10 +1,3 @@
-#include <iostream>
-
+#include <cstdio> 
 using namespace std;
-
-int main(void)
-{
-    int n;
-    cin >> n;
-    (n % 7 == 2) ? cout << 1 : cout << 0; 
-}
+int main(void){int n; scanf("%d", &n); (n % 7 == 2) ? printf("1") : printf("0");}
