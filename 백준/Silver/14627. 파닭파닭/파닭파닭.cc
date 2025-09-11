@@ -28,7 +28,7 @@ int main(void)
     	cin >> num[i];
     	sum += num[i];
     }
-    st = 0, en = 1e15+1;
+    st = 0, en = 1e9+1;
     while(st+1 < en)
     {
         long long mid = (st+en)/2;
