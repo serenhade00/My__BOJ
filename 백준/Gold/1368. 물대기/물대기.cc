@@ -1,60 +1,71 @@
-#include <bits/stdc++.h>
-#define X first
-#define Y second
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <tuple>
+
+#define MAX 305
 
 using namespace std;
 
-// 비용, 정점 번호
-vector<pair<int,int>> edge[501];
-priority_queue<tuple<int,int,int>, 
-               vector<tuple<int,int,int>>,
-               greater<tuple<int,int,int>>> pq;
-bool chk[501];
+int v, e, sum, cnt;
+vector<int> p(MAX, -1);
+tuple<int, int, int> edge[100001];
+
+int find(int x)
+{
+	if (p[x] < 0)
+		return x;
+	return p[x] = find(p[x]);
+}
+
+bool uni(int a, int b)
+{
+	a = find(a), b = find(b);
+	if (a == b)
+		return true;
+	if (p[b] < p[a])
+		swap(a, b);
+	if (p[a] == p[b])
+		p[a]--;
+	p[b] = a;
+	return false;
+}
 
 int main(void)
 {
-    ios::sync_with_stdio(0);
-    cin.tie(0);
-    
-    int n, cost, num = 1;
-    cin >> n;
-    for(int i=1; i<=n; i++)
-    {
-        cin >> cost;
-        edge[i].push_back({cost, n+1});
-        edge[n+1].push_back({cost, i});
-    }
-    
-    for(int i=1; i<=n; i++)
-    {
-        for(int j=1; j<=n; j++)
-        {
-            cin >> cost;
-           
-            edge[i].push_back({cost, j});
-        }
-    }
-    
-    chk[1] = 1;
-    for(auto nxt : edge[1])
-        pq.push({nxt.X, 1, nxt.Y});
-  
-    int v = 0, sum = 0;
-    while(v < n)
-    {
-        int cost, a, b;
-        tie(cost, a, b) = pq.top();
-        pq.pop();
-        if(chk[b])
-            continue;
-        chk[b] = 1;
-        for(auto nxt : edge[b])
-        {
-            if(!chk[nxt.Y])
-                pq.push({nxt.X, b, nxt.Y});
-        }
-        v++;
-        sum += cost;
-    }
-    cout << sum;
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+
+	int cost, a, b;
+	cin >> v;
+	for (int i = 1; i <= v; i++)
+	{
+		cin >> cost;
+		edge[e++] = { cost, i, v + 1 };
+	}
+	for (int i = 1; i <= v; i++)
+	{
+		for (int j = 1; j <= v; j++)
+		{
+			cin >> cost;
+			if (i > j)
+				continue;
+			edge[e++] = { cost, i, j };
+		}
+	}
+	sort(edge, edge + e);
+	v++;
+	for (int i = 0; i < e; i++)
+	{
+		int cost, a, b;
+		tie(cost, a, b) = edge[i];
+		if (!uni(a, b))
+		{
+			sum += cost;
+			cnt++;
+			if (cnt >= v - 1)
+				break;
+		}
+	}
+	cout << sum;
 }
