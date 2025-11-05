@@ -61,10 +61,7 @@ int main(void)
             if(graph[i][j] == 1)
                 house.push_back({i, j});
             else if(graph[i][j] == 2)
-            {
                 chicken.push_back({i, j});
-                graph[i][j] = 0;
-            }
         }
     }
     ho_cnt = house.size();
